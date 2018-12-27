@@ -28,7 +28,8 @@
  */
 
 //package AlloyAnalyzer.dist.edu.mit.csail.sdg.alloy4whole;
-package edu.mit.csail.sdg.alloy4whole;
+//package edu.mit.csail.sdg.alloy4whole;
+
 
 import java.util.*;
 import java.io.PrintWriter;

@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="alloy4.21">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/bin/alloy4.2.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>
