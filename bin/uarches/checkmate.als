@@ -88,8 +88,11 @@ abstract sig Outcome { }
 one sig Taken extends Outcome { }
 one sig NotTaken extends Outcome { }
 
+//Conventional FOPC writes “(∃ x)(Px)”.
+//Alloy writes: some x | P[x]
+
 //po
-fact po_acyclic { acyclic[po] }															
+fact po_acyclic { acyclic[po] } //this is a function named acyclic to check whether po is acycle. 															
 fact po_prior { all e: Event | lone e.~po }											
 
 fun po_loc : MemoryEvent->MemoryEvent { ^po & (address.map).~(address.map) }	
