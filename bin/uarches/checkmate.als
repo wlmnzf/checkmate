@@ -3,6 +3,15 @@ module checkmate
 /////////////////////////////////////////////////////////////////////////////////////
 // Candidate Executions module
 /////////////////////////////////////////////////////////////////////////////////////
+// Alloy Signature 							Set Contains All...
+// sig Address 								addressable memory locations
+// abstract sig Event 						micro-ops
+// abstract sig MemoryEvent extends Event 	micro-ops that access memory
+// sig Write extends MemoryEvent 			micro-ops that write memory
+// sig Read extends MemoryEvent 			micro-ops that read memory
+// abstract sig Location 					microarchitectural structures
+// sig Node 								nodes in a µhb graph
+
 
 sig Core { }
 
@@ -38,22 +47,22 @@ abstract sig Event {
    	core: one Core,	
 
 	sub_uhb: set Location->Event->Location,
-	urf : set Location->Event->Location,		
+	urf : set Location->Event->Location, 			//read from		
 	uco : set Location->Event->Location,
-	ufr : set Location->Event->Location,
+	ufr : set Location->Event->Location, 			//from read
 	ustb_flush: set Location->Event->Location,
-	udep : set Location->Event->Location,
+	udep : set Location->Event->Location,			// dependence
 	uhb_spec : set Location->Event->Location,
-	ucoh_inter : set Location->Event->Location,
-	ucoh_intra : set Location->Event->Location,
+	ucoh_inter : set Location->Event->Location,		//coherence in superscalar pipeline 多个流水线之间
+	ucoh_intra : set Location->Event->Location,		//coherence in pipeline 
 	ustb: set Location->Event->Location,
-	uvicl: set Location->Event->Location,		
+	uvicl: set Location->Event->Location,			//value in cache lifetime	
   	ucci: set Location->Event->Location,
-  	usquash: set Location->Event->Location,
-  	ufence: set Location->Event->Location,
-	uflush: set Location->Event->Location,	
-	uhb_inter: set Location->Event->Location,
-	uhb_intra: set Location->Event->Location,
+  	usquash: set Location->Event->Location, 		//CPU need to do when branch prediction fails
+  	ufence: set Location->Event->Location,  		//lfence mfence, order of io
+	uflush: set Location->Event->Location,			//flush cache
+	uhb_inter: set Location->Event->Location,		//happen before in superscalar pipeline 多个流水线之间
+	uhb_intra: set Location->Event->Location,		//happen before in pipeline 
 	uhb_proc: set Location->Event->Location
 }
 
@@ -91,6 +100,14 @@ one sig NotTaken extends Outcome { }
 //Conventional FOPC writes “(∃ x)(Px)”.
 //Alloy writes: some x | P[x]
 
+// product: x -> y
+// dot-join: x . y
+// box-join: y[x]
+// transpose: ~x  转置
+// transitive closure: ^x, *x  传递闭包
+// domain/range restriction: <:x, x:>
+// override: x ++ y
+
 //po
 fact po_acyclic { acyclic[po] } //this is a function named acyclic to check whether po is acycle. 															
 fact po_prior { all e: Event | lone e.~po }											
@@ -107,6 +124,15 @@ fact com_in_same_addr { com in (address.map).~(address.map) }
 //writes
 fact co_transitive { transitive[co] }													
 fact co_total { all a: Address | total[co, a.~(address.map) & Write] }
+
+// Definition: R is reflexive iff:
+// all a : univ | a -> a in R
+// Or, put another way:
+// iden in R
+
+
+// The identity relation on set E is the set {(x,x) | x∈E}. 
+// The identity relation is true for all pairs whose first and second element are identical. 
 
 //reads
 fact lone_source_write { rf.~rf in iden }								
@@ -157,7 +183,7 @@ fact {
 				uhb_proc
 			} = sub_uhb
 }
-	
+// The product(->) of two relations R and S is the relation {(w,x,y,z) | wRx∧yRz} }
 // no iden in uhb 
 fact { all e, e' : Event | all l, l' : Location | e->e' in iden and l->l' in iden => not e->l->e'->l' in sub_uhb  }
 
