@@ -46,7 +46,7 @@ abstract sig Event {
 	coh: set Event,
    	core: one Core,	
 
-	sub_uhb: set Location->Event->Location,
+	sub_uhb: set Location->Event->Location,         // Location为纵轴，即流水线，Event为横轴Location
 	urf : set Location->Event->Location, 			//read from		
 	uco : set Location->Event->Location,
 	ufr : set Location->Event->Location, 			//from read
@@ -109,7 +109,7 @@ one sig NotTaken extends Outcome { }
 // override: x ++ y
 
 //po
-fact po_acyclic { acyclic[po] } //this is a function named acyclic to check whether po is acycle. 															
+fact po_acyclic { acyclic[po] } //po.acyclic po的无环图 															
 fact po_prior { all e: Event | lone e.~po }											
 
 fun po_loc : MemoryEvent->MemoryEvent { ^po & (address.map).~(address.map) }	
