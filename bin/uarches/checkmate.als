@@ -110,17 +110,19 @@ one sig NotTaken extends Outcome { }
 
 //po
 fact po_acyclic { acyclic[po] } //po.acyclic po的无环图 															
-fact po_prior { all e: Event | lone e.~po }											
+fact po_prior { all e: Event | lone e.~po }		//po是Event x Event的关系，这里将其倒置									
 
 fun po_loc : MemoryEvent->MemoryEvent { ^po & (address.map).~(address.map) }	
  //address是MemoryEvent到VirtualAddress之间的一个关系，而map是VirtualAddress到PhysicalAddress的一个关系，
  //两者的Dot join将会消除掉中间的VirtualAddress,因此address.map表示MemoryEvent到物理地址的一种关系
  
+ //po_loc是MemoryEvent x MemoryEvent，但是这两个MemoryEvent访问的地址都相同
+
 //dep
-fact dep_in_po { dep in ^po }				
+fact dep_in_po { dep in ^po }	//dep是po传递闭包的一个子集			
 
 //com
-fun com : MemoryEvent->MemoryEvent { rf + fr + co }								
+fun com : MemoryEvent->MemoryEvent { rf + fr + co }	//这里的Com是readfrom，from read和co关系的并集合						
 fact com_in_same_addr { com in (address.map).~(address.map) }						
 
 //writes
