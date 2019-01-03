@@ -113,7 +113,9 @@ fact po_acyclic { acyclic[po] } //po.acyclic po的无环图
 fact po_prior { all e: Event | lone e.~po }											
 
 fun po_loc : MemoryEvent->MemoryEvent { ^po & (address.map).~(address.map) }	
-
+ //address是MemoryEvent到VirtualAddress之间的一个关系，而map是VirtualAddress到PhysicalAddress的一个关系，
+ //两者的Dot join将会消除掉中间的VirtualAddress,因此address.map表示MemoryEvent到物理地址的一种关系
+ 
 //dep
 fact dep_in_po { dep in ^po }				
 
