@@ -109,7 +109,7 @@ one sig NotTaken extends Outcome { }
 // override: x ++ y
 
 //po
-fact po_acyclic { acyclic[po] } //po.acyclic po的无环图 															
+fact po_acyclic { acyclic[po] } //这里的acyclic是个谓词														
 fact po_prior { all e: Event | lone e.~po }		//po是Event x Event的关系，这里将其倒置									
 
 fun po_loc : MemoryEvent->MemoryEvent { ^po & (address.map).~(address.map) }	
@@ -208,10 +208,10 @@ pred ucheck { acyclic[uhb]  } 					// ucheck is a predicate that requires acycli
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // =Alloy shortcuts=
 fun optional[f: univ->univ] : univ->univ  { iden + f }
-pred transitive[rel: Event->Event]        { rel.rel in rel }	
-pred irreflexive[rel: Event->Event]       { no iden & rel }
-pred irreflexive[rel: Node->Node]       { no iden & rel }
-pred acyclic[rel: Event->Event]           { irreflexive[^rel] }
+pred transitive[rel: Event->Event]        { rel.rel in rel }	//传递性的谓词
+pred irreflexive[rel: Event->Event]       { no iden & rel }    //反自反性的谓词，反自反要求对角线上的元素都不存在。即rel与iden相交为空
+pred irreflexive[rel: Node->Node]       { no iden & rel }      //此处表示不存在iden与rel相交后的元素
+pred acyclic[rel: Event->Event]           { irreflexive[^rel] } //非循环的，如果rel的传递闭包是反自反的
 pred acyclic[rel: Node->Node]           { irreflexive[^rel] } 
 pred total[rel: Event->Event, bag: Event] {
   all disj e, e': bag | e->e' in rel + ~rel	
