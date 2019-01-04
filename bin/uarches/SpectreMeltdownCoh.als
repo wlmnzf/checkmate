@@ -188,22 +188,27 @@ fact Fetch_stage_is_inorder { all disj e, e' : Event 	|
 	ProgramOrder[e, e'] <=>
 	EdgeExists[e, Fetch, e', Fetch, uhb_inter]
 }
+//e和e'是按正常程序顺序的Event,则存在（e，Fetch）到（e’，Fetch）的边也是按顺序的
 
+//执行阶段是乱序执行
 fact Execute_state_is_ooo { all disj e, e' : Event 	| 
 	(EdgeExists[e, Fetch, e',  Fetch, uhb_inter] and (SamePhysicalAddress[e, e'] or HasDependency[e, e'] or IsAnyFence[e] or IsAnyFence[e'])) <=>
 	EdgeExists[e, Execute, e', Execute, uhb_inter]
 }
+//存在（e，Fetch）到（e’，Fetch）的边同时存在下面这几种情况之一（Event e和e'具有相同的访问地址 或者 Event e和e’具有依赖（这里的依赖要求e为Read）或者 e或者e'为屏障）则它们必须顺序执行，其余情况是乱序执行的
 
 fact Commit_stage_is_inorder { all disj e, e' : Event		| 
 	(EdgeExists[e, Fetch, e', Fetch, uhb_inter] and NodeExists[e, Commit] and NodeExists[e', Commit]) <=>
 	EdgeExists[e, Commit, e', Commit, uhb_inter]
 }
 
+// Write Write + Store buffer FIFO
 fact STB_FIFO { all disj w, w' : Write 	|
 	EdgeExists[w, Commit, w', Commit, uhb_inter] <=>
 	EdgeExists[w, StoreBuffer, w', StoreBuffer, uhb_inter]
 }
 
+// Store buffer 处理完之后   （at one time每次一个）
 fact STB_OneAtATime { all disj w, w' : Write |
 	EdgeExists[w, StoreBuffer, w', StoreBuffer, uhb_inter] <=>
 	(
@@ -869,7 +874,7 @@ pred flush_reload {
 	NodeExists[f, Commit] and
 
 	SameVirtualAddress[a, a'] and 
-	ProgramOrder[a, a'] and
+	ProgramOrder[a, a'] and  //PO  a=》f=》a
 
 	ProgramOrder[a, f] and
 	ProgramOrder[f, a'] and

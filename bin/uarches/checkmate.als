@@ -247,12 +247,12 @@ fun MispredictedBranch : Branch { Branch - ((outcome.~prediction) & iden).Branch
 pred NodeExists[e: Event, l: Location] { e->l in NodeRel }
 pred EdgeExists[e: Event, l: Location, e': Event, l': Location, node_rel: Event->Location->Event->Location] 	{ e->l->e'->l' in node_rel }
 pred DataFromInitialStateAtPA[r: Read] { r in {Read - Write.rf} }
-pred HasDependency[r: Event, e: Event] { r->e in dep}
+pred HasDependency[r: Event, e: Event] { r->e in dep}   //从Read到MemoryEvent或者CacheFlush
 pred IsAnyMemory[e: Event] { e in MemoryEvent}
 pred IsAnyRead[e: Event] { e in Read }
 pred IsAnyWrite[e: Event] { e in Write }
 pred IsAnyFence[e: Event] { e in Fence }
-pred IsAnyBranch[e: Event] { e in Fence }
+pred IsAnyBranch[e: Event] { e in Fence }//是不是写错了
 pred IsCacheFlush[e: Event] { e in CacheFlush }
 pred SameProcess[e: Event, e': Event] { e->e' in process.~process }
 pred SameCore[e: Event, e': Event] { e->e' in core.~core }
