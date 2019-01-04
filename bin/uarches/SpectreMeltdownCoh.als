@@ -874,7 +874,7 @@ pred flush_reload {
 	NodeExists[f, Commit] and
 
 	SameVirtualAddress[a, a'] and 
-	ProgramOrder[a, a'] and  //PO  a=》f=》a
+	ProgramOrder[a, a'] and  //PO  a=》f=》a'  a是读写密钥等操作，f是cache flush，a'是reload操作
 
 	ProgramOrder[a, f] and
 	ProgramOrder[f, a'] and
