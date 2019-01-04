@@ -61,8 +61,8 @@ abstract sig Event {
   	usquash: set Location->Event->Location, 		//CPU need to do when branch prediction fails
   	ufence: set Location->Event->Location,  		//lfence mfence, order of io
 	uflush: set Location->Event->Location,			//flush cache
-	uhb_inter: set Location->Event->Location,		//happen before in superscalar pipeline 多个流水线之间
-	uhb_intra: set Location->Event->Location,		//happen before in pipeline 
+	uhb_inter: set Location->Event->Location,		//uhb_inter only relates different events on the same core
+	uhb_intra: set Location->Event->Location,		//uhb_intra only relates the same event to different locations
 	uhb_proc: set Location->Event->Location
 }
 

@@ -5,6 +5,15 @@ open checkmate
 // Pipeline module
 /////////////////////////////////////////////////////////////////////////////////////
 
+// Alloy Signature 							Set Contains All...
+// sig Address 								addressable memory locations
+// abstract sig Event 						micro-ops
+// abstract sig MemoryEvent extends Event 	micro-ops that access memory
+// sig Write extends MemoryEvent 			micro-ops that write memory
+// sig Read extends MemoryEvent 			micro-ops that read memory
+// abstract sig Location 					microarchitectural structures
+// sig Node 								nodes in a µhb graph
+
 // define pipeline locations
 one sig Fetch extends Location { }	
 one sig Execute extends Location { }
@@ -20,9 +29,14 @@ one sig MainMemory extends Location { }
 one sig Complete extends Location { }
 
 // instruction_paths
-fun SquashedEvent : Event { Event - NodeRel.Commit }
+fun SquashedEvent : Event { Event - NodeRel.Commit } //SquashedEvent是由所有的Event减去已经提交的Event
 fun CommittedEvent : Event { NodeRel.Commit }
 
+// Branch <: SquashedEvent 表示在SquashedEvent关系中Branch开头的元组的集合
+// br_path_squash表示squash的路径
+// br_path_commit表示commit的路径
+// uhb_intra only relates the same event to different locations
+// uhb_inter only relates different events on the same core
 fact 	{ all b : Branch <: SquashedEvent | all disj l, l' : Location | l->l' in br_path_squash <=> EdgeExists[b, l, b, l', uhb_intra] }
 fact 	{ all b : Branch <: CommittedEvent | all disj l, l' : Location | l->l' in br_path_commit <=> EdgeExists[b, l, b, l', uhb_intra] }
 
